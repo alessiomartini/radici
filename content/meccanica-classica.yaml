@@ -1,0 +1,216 @@
+# Meccanica classica (pilota). Schema in README.md. Gli id non si cambiano mai (lo storico è legato all'id).
+
+- id: cm-azione
+  field: Meccanica classica
+  kind: definizione
+  title: Azione e principio di Hamilton
+  prereq: []
+  prompt: Definisci l'azione di un sistema con lagrangiana $L(q,\dot q,t)$ ed enuncia il principio di Hamilton (con le condizioni al bordo).
+  answer: |
+    $$S[q] = \int_{t_1}^{t_2} L(q(t),\dot q(t),t)\,dt.$$
+    Fra tutte le curve con estremi fissati $q(t_1)=q_1$, $q(t_2)=q_2$, quella fisica rende $S$ **stazionaria**: $\delta S = 0$ per ogni variazione $\delta q$ con $\delta q(t_1)=\delta q(t_2)=0$. Stazionaria, non necessariamente minima.
+  connections:
+    - field: Ottica
+      note: Principio di Fermat, il raggio rende stazionario il cammino ottico $\int n\,ds$.
+    - field: Meccanica quantistica
+      note: Nel path integral ogni cammino pesa $e^{iS/\hbar}$; per $\hbar\to 0$ domina il cammino stazionario (fase stazionaria).
+
+- id: cm-el
+  field: Meccanica classica
+  kind: derivazione
+  title: Equazioni di Eulero-Lagrange
+  prereq: [cm-azione]
+  prompt: Deriva le equazioni di Eulero-Lagrange da $\delta S = 0$.
+  answer: $$\frac{d}{dt}\frac{\partial L}{\partial \dot q_i} - \frac{\partial L}{\partial q_i} = 0.$$
+  solutions:
+    - label: Variazione dell'azione
+      steps: |
+        Sia $q \to q + \epsilon\,\eta$ con $\eta(t_1)=\eta(t_2)=0$. Al primo ordine
+        $$\delta S = \epsilon\int_{t_1}^{t_2}\Big(\frac{\partial L}{\partial q}\eta + \frac{\partial L}{\partial \dot q}\dot\eta\Big)dt.$$
+        Integrando per parti il secondo termine:
+        $$\delta S = \epsilon\Big[\frac{\partial L}{\partial \dot q}\eta\Big]_{t_1}^{t_2} + \epsilon\int_{t_1}^{t_2}\Big(\frac{\partial L}{\partial q} - \frac{d}{dt}\frac{\partial L}{\partial \dot q}\Big)\eta\,dt.$$
+        Il termine di bordo è zero perché $\eta$ si annulla agli estremi. L'integrale deve annullarsi per ogni $\eta$, quindi l'integrando è zero.
+      uses:
+        - field: Analisi
+          result: Lemma fondamentale del calcolo delle variazioni (se $\int f\eta = 0$ per ogni $\eta$ liscia a supporto compatto e $f$ è continua, allora $f=0$).
+  connections:
+    - field: Teoria classica dei campi
+      note: Stessa derivazione con $L(\phi,\partial_\mu\phi)$ dà $\partial_\mu \frac{\partial \mathcal L}{\partial(\partial_\mu\phi)} = \frac{\partial\mathcal L}{\partial\phi}$; il bordo diventa un integrale di superficie (Stokes).
+    - field: Meccanica quantistica
+      note: Nel path integral le equazioni del moto valgono come identità di Schwinger-Dyson, cioè dentro i valori di aspettazione, a meno di termini di contatto.
+
+- id: cm-ciclica
+  field: Meccanica classica
+  kind: proposizione
+  title: Coordinate cicliche
+  prereq: [cm-el]
+  prompt: Cosa succede se la lagrangiana non dipende da una coordinata $q_k$? Dimostralo in una riga.
+  answer: |
+    Il momento coniugato $p_k = \partial L/\partial \dot q_k$ si conserva: dalle equazioni di Eulero-Lagrange $\dot p_k = \partial L/\partial q_k = 0$.
+  connections:
+    - field: Meccanica classica
+      note: È il caso più semplice del teorema di Noether, con simmetria $q_k\to q_k+\epsilon$.
+
+- id: cm-noether
+  field: Meccanica classica
+  kind: teorema
+  title: Teorema di Noether (meccanica)
+  prereq: [cm-el, cm-ciclica]
+  prompt: Enuncia e dimostra il teorema di Noether per una trasformazione infinitesima $\delta q_i = \epsilon K_i(q)$ che cambia $L$ al più di una derivata totale, $\delta L = \epsilon\,\dot F$.
+  answer: |
+    La carica $Q = \sum_i \frac{\partial L}{\partial \dot q_i}K_i - F$ si conserva lungo le soluzioni delle equazioni del moto.
+  solutions:
+    - label: Calcolo on-shell
+      steps: |
+        Per qualunque variazione
+        $$\delta L = \sum_i\Big(\frac{\partial L}{\partial q_i}\delta q_i + \frac{\partial L}{\partial \dot q_i}\delta\dot q_i\Big).$$
+        Sulle soluzioni $\frac{\partial L}{\partial q_i} = \frac{d}{dt}\frac{\partial L}{\partial \dot q_i}$, quindi
+        $$\delta L = \frac{d}{dt}\Big(\sum_i \frac{\partial L}{\partial \dot q_i}\delta q_i\Big) = \epsilon\frac{d}{dt}\Big(\sum_i p_i K_i\Big).$$
+        Uguagliando a $\delta L = \epsilon\dot F$ (vale per ipotesi, anche fuori dalle soluzioni) si ha $\frac{d}{dt}(\sum_i p_iK_i - F) = 0$.
+    - label: Via hamiltoniana
+      steps: |
+        Nel formalismo hamiltoniano (senza termine $F$): $Q$ genera la trasformazione, $\delta q_i = \epsilon\{q_i, Q\}$. La simmetria significa $\{H,Q\}=0$, cioè $\dot Q = \{Q,H\} = 0$. Simmetria e conservazione sono la stessa parentesi letta nei due versi.
+      uses:
+        - field: Meccanica classica
+          result: Parentesi di Poisson ed evoluzione $\dot f = \{f,H\}$.
+  connections:
+    - field: Teoria classica dei campi
+      note: Corrente $j^\mu$ con $\partial_\mu j^\mu=0$, carica $Q=\int j^0\,d^3x$.
+    - field: QFT
+      note: In quantistica diventa le identità di Ward; per le simmetrie generalizzate la carica è un operatore topologico su una superficie.
+    - field: Teoria dei gruppi
+      note: Le cariche conservate generano l'algebra di Lie del gruppo di simmetria tramite la parentesi di Poisson.
+
+- id: cm-legendre
+  field: Meccanica classica
+  kind: derivazione
+  title: Dalla lagrangiana alle equazioni di Hamilton
+  prereq: [cm-el]
+  prompt: Definisci $H$ con la trasformata di Legendre e deriva le equazioni di Hamilton.
+  answer: |
+    $H(q,p,t) = \sum_i p_i\dot q_i - L$ con $p_i = \partial L/\partial\dot q_i$. Allora $\dot q_i = \partial H/\partial p_i$, $\dot p_i = -\partial H/\partial q_i$, $\partial H/\partial t = -\partial L/\partial t$.
+  solutions:
+    - label: Differenziale
+      steps: |
+        $$dH = \sum_i\big(\dot q_i\,dp_i + p_i\,d\dot q_i\big) - \sum_i\Big(\frac{\partial L}{\partial q_i}dq_i + \frac{\partial L}{\partial\dot q_i}d\dot q_i\Big) - \frac{\partial L}{\partial t}dt.$$
+        I termini in $d\dot q_i$ si cancellano per la definizione di $p_i$: è il motivo della trasformata di Legendre, $H$ dipende da $(q,p)$ e non da $\dot q$. Resta
+        $$dH = \sum_i\Big(\dot q_i\,dp_i - \frac{\partial L}{\partial q_i}dq_i\Big) - \frac{\partial L}{\partial t}dt.$$
+        Si leggono $\partial H/\partial p_i = \dot q_i$ e $\partial H/\partial q_i = -\partial L/\partial q_i = -\dot p_i$ (Eulero-Lagrange).
+      uses:
+        - field: Analisi convessa
+          result: La trasformata di Legendre è invertibile se $L$ è strettamente convessa in $\dot q$ (matrice $\partial^2L/\partial\dot q\partial\dot q$ definita positiva).
+  connections:
+    - field: Termodinamica
+      note: Stessa operazione per passare fra potenziali termodinamici, ad esempio $F = U - TS$ scambia $S$ con $T$.
+    - field: Meccanica statistica / grandi deviazioni
+      note: L'energia libera e la funzione di rate sono trasformate di Legendre l'una dell'altra (teorema di Gärtner-Ellis).
+
+- id: cm-poisson
+  field: Meccanica classica
+  kind: definizione
+  title: Parentesi di Poisson
+  prereq: [cm-legendre]
+  prompt: Definisci la parentesi di Poisson e scrivi l'evoluzione temporale di una funzione $f(q,p,t)$.
+  answer: |
+    $$\{f,g\} = \sum_i\Big(\frac{\partial f}{\partial q_i}\frac{\partial g}{\partial p_i} - \frac{\partial f}{\partial p_i}\frac{\partial g}{\partial q_i}\Big),\qquad \frac{df}{dt} = \{f,H\} + \frac{\partial f}{\partial t}.$$
+    In particolare $\{q_i,p_j\} = \delta_{ij}$.
+  connections:
+    - field: Meccanica quantistica
+      note: Quantizzazione canonica, $\{f,g\}\to \frac{1}{i\hbar}[\hat f,\hat g]$; l'evoluzione diventa l'equazione di Heisenberg.
+    - field: Geometria differenziale
+      note: È la struttura indotta dalla forma simplettica $\omega = \sum_i dq_i\wedge dp_i$.
+
+- id: cm-liouville
+  field: Meccanica classica
+  kind: teorema
+  title: Teorema di Liouville
+  prereq: [cm-legendre]
+  prompt: Enuncia e dimostra il teorema di Liouville sul volume nello spazio delle fasi.
+  answer: Il flusso hamiltoniano conserva il volume nello spazio delle fasi; una densità $\rho(q,p,t)$ trasportata dal flusso soddisfa $\partial_t\rho + \{\rho,H\} = 0$.
+  solutions:
+    - label: Divergenza nulla
+      steps: |
+        Il campo di velocità nello spazio delle fasi è $v = (\dot q,\dot p) = (\partial H/\partial p,\,-\partial H/\partial q)$. La sua divergenza è
+        $$\nabla\cdot v = \sum_i\Big(\frac{\partial^2 H}{\partial q_i\partial p_i} - \frac{\partial^2 H}{\partial p_i\partial q_i}\Big) = 0.$$
+        Un flusso a divergenza nulla conserva il volume: $\frac{d}{dt}\mathrm{Vol}(\Omega_t) = \int_{\Omega_t}\nabla\cdot v = 0$.
+      uses:
+        - field: Analisi / sistemi dinamici
+          result: Formula di Liouville (Jacobi) $\frac{d}{dt}\det J = (\nabla\cdot v)\det J$.
+    - label: Forma simplettica
+      steps: |
+        Il flusso hamiltoniano conserva $\omega = \sum_i dq_i\wedge dp_i$ : con $X_H = \frac{\partial H}{\partial p}\partial_q - \frac{\partial H}{\partial q}\partial_p$ si ha $\iota_{X_H}\omega = dH$, e per la formula di Cartan $\mathcal L_{X_H}\omega = d\,\iota_{X_H}\omega + \iota_{X_H}d\omega = d\,dH = 0$. Allora conserva anche $\omega^n/n!$, che è la forma di volume.
+      uses:
+        - field: Geometria differenziale
+          result: Formula magica di Cartan $\mathcal L_X = d\,\iota_X + \iota_X d$.
+  connections:
+    - field: Meccanica statistica
+      note: Giustifica le misure stazionarie (microcanonica) come funzioni di $H$.
+    - field: Meccanica statistica fuori equilibrio
+      note: Con attrito e rumore (Langevin) il volume non si conserva; l'equazione di Liouville diventa la Fokker-Planck.
+
+- id: cm-binet
+  field: Meccanica classica
+  kind: derivazione
+  title: Orbite kepleriane (equazione di Binet)
+  prereq: [cm-el, cm-noether]
+  prompt: Per una forza centrale attrattiva $F(r) = -k/r^2$, trova la forma dell'orbita $r(\theta)$.
+  answer: |
+    $$r(\theta) = \frac{L^2/(mk)}{1 + e\cos\theta},$$
+    una conica di eccentricità $e$ (ellisse se $e<1$), con $L = mr^2\dot\theta$ conservato.
+  solutions:
+    - label: Equazione di Binet
+      steps: |
+        Equazione radiale: $m(\ddot r - r\dot\theta^2) = F(r)$, con $\dot\theta = L/(mr^2)$. Pongo $u = 1/r$ e uso $\theta$ come variabile:
+        $$\dot r = -\frac{L}{m}u',\qquad \ddot r = -\frac{L^2}{m^2}u^2u'',\qquad r\dot\theta^2 = \frac{L^2}{m^2}u^3.$$
+        Sostituendo: $-\frac{L^2}{m}u^2(u''+u) = F$, cioè
+        $$u'' + u = -\frac{m}{L^2u^2}F(1/u) = \frac{mk}{L^2}.$$
+        Soluzione: $u = \frac{mk}{L^2}(1 + e\cos\theta)$ (scegliendo l'origine di $\theta$ al perielio).
+    - label: Vettore di Laplace-Runge-Lenz
+      steps: |
+        $\mathbf A = \mathbf p\times\mathbf L - mk\,\hat{\mathbf r}$ si conserva per il potenziale $-k/r$ (verifica con $\dot{\mathbf p} = -k\hat{\mathbf r}/r^2$). Moltiplicando per $\mathbf r$:
+        $$\mathbf A\cdot\mathbf r = \mathbf r\cdot(\mathbf p\times\mathbf L) - mkr = \mathbf L\cdot(\mathbf r\times\mathbf p) - mkr = L^2 - mkr.$$
+        Con $\mathbf A\cdot\mathbf r = Ar\cos\theta$ si ottiene $r = \frac{L^2/(mk)}{1+(A/mk)\cos\theta}$: zero equazioni differenziali, $e = A/(mk)$.
+      uses:
+        - field: Algebra
+          result: Identità del prodotto triplo $\mathbf a\cdot(\mathbf b\times\mathbf c) = \mathbf c\cdot(\mathbf a\times\mathbf b)$.
+  connections:
+    - field: Teoria dei gruppi
+      note: $\mathbf L$ e $\mathbf A$ (riscalato) generano $so(4)$ per le orbite legate. È la simmetria nascosta che rende chiuse le orbite.
+    - field: Meccanica quantistica
+      note: La stessa $so(4)$ spiega la degenerazione $n^2$ dell'atomo di idrogeno (Pauli 1926, spettro senza risolvere Schrödinger).
+
+- id: cm-piccole-osc
+  field: Meccanica classica
+  kind: derivazione
+  title: Piccole oscillazioni e modi normali
+  prereq: [cm-el]
+  prompt: Espandi una lagrangiana $L = \frac12 T_{ij}(q)\dot q_i\dot q_j - V(q)$ attorno a un minimo $q_0$ di $V$ e trova le frequenze dei modi normali.
+  answer: |
+    Con $\eta = q - q_0$: $L \approx \frac12 T_{ij}\dot\eta_i\dot\eta_j - \frac12 V_{ij}\eta_i\eta_j$ ($T_{ij} = T_{ij}(q_0)$, $V_{ij} = \partial_i\partial_jV(q_0)$). Le frequenze risolvono $\det(V - \omega^2 T) = 0$.
+  solutions:
+    - label: Ansatz armonico
+      steps: |
+        Eulero-Lagrange: $T_{ij}\ddot\eta_j + V_{ij}\eta_j = 0$. Con $\eta = a\,e^{i\omega t}$: $(V - \omega^2T)a = 0$, che ha soluzioni non banali solo se $\det(V-\omega^2T) = 0$. Il termine di ordine zero di $T$ basta perché $\dot\eta$ è già del primo ordine.
+      uses:
+        - field: Algebra lineare
+          result: Diagonalizzazione simultanea di due forme quadratiche simmetriche quando una ($T$) è definita positiva; gli $\omega^2$ sono reali, e positivi se $V$ è definita positiva.
+  connections:
+    - field: QFT
+      note: Un campo libero è un insieme infinito di oscillatori disaccoppiati, uno per ogni modo $\mathbf k$ con $\omega_k = \sqrt{k^2+m^2}$.
+    - field: Struttura della materia
+      note: I fononi sono i modi normali del reticolo cristallino.
+
+- id: cm-hj
+  field: Meccanica classica
+  kind: formula
+  title: Equazione di Hamilton-Jacobi
+  prereq: [cm-legendre]
+  prompt: Scrivi l'equazione di Hamilton-Jacobi e dì cosa rappresenta $S$.
+  answer: |
+    $$\frac{\partial S}{\partial t} + H\Big(q,\frac{\partial S}{\partial q},t\Big) = 0.$$
+    $S(q,t)$ è l'azione valutata lungo la traiettoria classica che arriva in $q$ al tempo $t$, e $p = \partial S/\partial q$.
+  connections:
+    - field: Meccanica quantistica
+      note: Con $\psi = A\,e^{iS/\hbar}$ nell'equazione di Schrödinger, l'ordine $\hbar^0$ è proprio Hamilton-Jacobi (WKB).
+    - field: Ottica
+      note: Equazione dell'iconale, i fronti d'onda sono le superfici $S=$ costante.

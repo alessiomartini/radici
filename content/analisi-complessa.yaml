@@ -1,0 +1,201 @@
+# Analisi complessa (pilota). Schema in README.md. Gli id non si cambiano mai.
+
+- id: ca-olomorfa
+  field: Analisi complessa
+  kind: definizione
+  title: Funzione olomorfa
+  prereq: []
+  prompt: Quando una funzione $f:U\to\mathbb C$ ($U$ aperto) si dice olomorfa? Che differenza c'è con "differenziabile come mappa $\mathbb R^2\to\mathbb R^2$"?
+  answer: |
+    $f$ è olomorfa se in ogni $z_0\in U$ esiste il limite $f'(z_0) = \lim_{h\to 0}\frac{f(z_0+h)-f(z_0)}{h}$ con $h\in\mathbb C$, indipendente da come $h\to0$.
+    Come mappa reale il differenziale deve essere una moltiplicazione per un numero complesso (una rotazione composta con una dilatazione), non una matrice $2\times2$ qualsiasi.
+
+- id: ca-cr
+  field: Analisi complessa
+  kind: derivazione
+  title: Equazioni di Cauchy-Riemann
+  prereq: [ca-olomorfa]
+  prompt: Con $f = u + iv$, deriva le equazioni di Cauchy-Riemann e mostra che $u$ e $v$ sono armoniche.
+  answer: $u_x = v_y$, $u_y = -v_x$; quindi $\Delta u = \Delta v = 0$ (se $u,v$ sono $C^2$).
+  solutions:
+    - label: Due direzioni del limite
+      steps: |
+        Con $h$ reale: $f' = u_x + i v_x$. Con $h = it$ immaginario: $f' = \frac{1}{i}(u_y + iv_y) = v_y - iu_y$.
+        Uguagliando parte reale e immaginaria: $u_x = v_y$, $v_x = -u_y$.
+        Poi $u_{xx} = v_{yx} = v_{xy} = -u_{yy}$, quindi $\Delta u = 0$; lo stesso per $v$.
+    - label: Derivata rispetto a $\bar z$
+      steps: |
+        Con $\partial_{\bar z} = \frac12(\partial_x + i\partial_y)$, le equazioni di Cauchy-Riemann sono la sola $\partial_{\bar z}f = 0$: $f$ non dipende da $\bar z$. E $\Delta = 4\,\partial_z\partial_{\bar z}$, quindi $\Delta f = 4\,\partial_z(\partial_{\bar z}f) = 0$.
+  connections:
+    - field: Elettromagnetismo / idrodinamica
+      note: Parte reale e immaginaria sono potenziale e funzione di flusso di un campo 2D irrotazionale e solenoidale (elettrostatica nel piano, flussi potenziali).
+    - field: CFT
+      note: In 2D le mappe olomorfe sono le trasformazioni conformi locali, da cui l'algebra di Virasoro.
+
+- id: ca-cerchio
+  field: Analisi complessa
+  kind: formula
+  title: Integrale di $z^n$ sul cerchio
+  prereq: []
+  prompt: Calcola $\oint_{|z|=r} z^n\,dz$ per ogni $n\in\mathbb Z$.
+  answer: |
+    $2\pi i$ se $n=-1$, zero altrimenti. Con $z = re^{i\theta}$: $\int_0^{2\pi} r^{n+1}\,i\,e^{i(n+1)\theta}d\theta = 2\pi i\,\delta_{n,-1}$.
+  connections:
+    - field: Analisi di Fourier
+      note: È l'ortogonalità $\int_0^{2\pi}e^{ik\theta}d\theta = 2\pi\delta_{k,0}$.
+    - field: Topologia
+      note: $\frac{1}{2\pi i}\oint\frac{dz}{z}$ conta quante volte la curva gira attorno all'origine (indice di avvolgimento, generatore di $\pi_1(\mathbb C\setminus 0) = \mathbb Z$).
+
+- id: ca-cauchy
+  field: Analisi complessa
+  kind: teorema
+  title: Teorema integrale di Cauchy
+  prereq: [ca-cr]
+  prompt: Enuncia il teorema di Cauchy e dimostralo (anche solo con ipotesi in più sulla regolarità).
+  answer: Se $f$ è olomorfa su un aperto semplicemente connesso $U$, allora $\oint_\gamma f\,dz = 0$ per ogni curva chiusa $\gamma\subset U$.
+  solutions:
+    - label: Green + Cauchy-Riemann (assumendo $f'$ continua)
+      steps: |
+        $$\oint_\gamma(u+iv)(dx+i\,dy) = \oint_\gamma(u\,dx - v\,dy) + i\oint_\gamma(v\,dx + u\,dy).$$
+        Per il teorema di Green, con $D$ la regione racchiusa:
+        $$= \iint_D(-v_x - u_y)\,dx\,dy + i\iint_D(u_x - v_y)\,dx\,dy = 0$$
+        per Cauchy-Riemann.
+      uses:
+        - field: Analisi 2
+          result: Teorema di Green (Stokes nel piano).
+    - label: Forme differenziali
+      steps: |
+        $d(f\,dz) = \partial_{\bar z}f\,d\bar z\wedge dz = 0$: $f\,dz$ è una 1-forma chiusa. Su un dominio semplicemente connesso ogni forma chiusa è esatta, quindi il suo integrale su una curva chiusa è zero.
+      uses:
+        - field: Geometria differenziale / topologia algebrica
+          result: Lemma di Poincaré; su $U$ semplicemente connesso $H^1_{dR}(U) = 0$.
+    - label: Goursat (senza ipotesi su $f'$)
+      steps: |
+        Si dimostra prima per i triangoli: si divide il triangolo in quattro, uno dei quattro porta almeno $1/4$ dell'integrale, si itera; vicino al punto limite $f(z) = f(z_0) + f'(z_0)(z-z_0) + o(|z-z_0|)$ e i termini lineari hanno integrale zero. Poi si passa a curve generali.
+  connections:
+    - field: Topologia
+      note: L'integrale dipende solo dalla classe di omotopia della curva; nei domini con buchi conta il numero di avvolgimenti.
+
+- id: ca-formula-integrale
+  field: Analisi complessa
+  kind: teorema
+  title: Formula integrale di Cauchy
+  prereq: [ca-cauchy, ca-cerchio]
+  prompt: Enuncia e dimostra la formula integrale di Cauchy. Che conseguenza ha sulla regolarità di $f$?
+  answer: |
+    $$f(z_0) = \frac{1}{2\pi i}\oint_\gamma\frac{f(z)}{z-z_0}dz,\qquad f^{(n)}(z_0) = \frac{n!}{2\pi i}\oint_\gamma\frac{f(z)}{(z-z_0)^{n+1}}dz$$
+    per $\gamma$ che gira una volta attorno a $z_0$. Una funzione olomorfa è infinitamente derivabile e analitica.
+  solutions:
+    - label: Deformare a un cerchietto
+      steps: |
+        $f(z)/(z-z_0)$ è olomorfa fuori da $z_0$, quindi per Cauchy si può sostituire $\gamma$ con un cerchio $|z-z_0|=\epsilon$. Lì
+        $$\oint\frac{f(z)}{z-z_0}dz = f(z_0)\oint\frac{dz}{z-z_0} + \oint\frac{f(z)-f(z_0)}{z-z_0}dz.$$
+        Il primo termine vale $2\pi i f(z_0)$. Nel secondo l'integrando è limitato vicino a $z_0$ (tende a $f'(z_0)$) e la lunghezza è $2\pi\epsilon$, quindi tende a zero per $\epsilon\to0$.
+        Le derivate si ottengono derivando sotto il segno di integrale rispetto a $z_0$.
+  connections:
+    - field: Elettromagnetismo
+      note: Come per le funzioni armoniche (proprietà della media), il valore all'interno è fissato dai valori sul bordo.
+
+- id: ca-liouville
+  field: Analisi complessa
+  kind: teorema
+  title: Teorema di Liouville e teorema fondamentale dell'algebra
+  prereq: [ca-formula-integrale]
+  prompt: Dimostra che una funzione intera e limitata è costante, e usalo per dimostrare il teorema fondamentale dell'algebra.
+  answer: Se $|f|\le M$ su tutto $\mathbb C$ allora $f' \equiv 0$. Un polinomio non costante senza zeri darebbe $1/p$ intera e limitata, quindi costante, assurdo.
+  solutions:
+    - label: Stima di Cauchy
+      steps: |
+        Dalla formula integrale su $|z-z_0|=R$:
+        $$|f'(z_0)| = \Big|\frac{1}{2\pi i}\oint\frac{f(z)}{(z-z_0)^2}dz\Big| \le \frac{1}{2\pi}\cdot\frac{M}{R^2}\cdot 2\pi R = \frac MR\xrightarrow{R\to\infty}0.$$
+        Per il teorema fondamentale: se $p$ non si annulla mai, $1/p$ è intera; e $|p(z)|\to\infty$ per $|z|\to\infty$, quindi $1/p$ è limitata. Allora $1/p$ è costante, cioè $p$ è costante.
+  connections:
+    - field: Algebra
+      note: Il teorema fondamentale dell'algebra, enunciato algebrico con una dimostrazione analitica; esistono anche prove topologiche (grado della mappa $z\mapsto p(z)$ sui cerchi grandi).
+    - field: Meccanica classica
+      note: Stesso nome, teorema diverso (il volume nello spazio delle fasi, carta cm-liouville).
+
+- id: ca-residui
+  field: Analisi complessa
+  kind: teorema
+  title: Teorema dei residui
+  prereq: [ca-cauchy, ca-cerchio]
+  prompt: Enuncia il teorema dei residui, dimostralo e dai la formula del residuo in un polo semplice e in un polo di ordine $m$.
+  answer: |
+    $$\oint_\gamma f\,dz = 2\pi i\sum_k \mathrm{Res}_{z_k}f$$
+    (curva percorsa in senso antiorario, una volta attorno a ogni $z_k$). Polo semplice: $\mathrm{Res} = \lim_{z\to z_k}(z-z_k)f(z)$. Ordine $m$: $\frac{1}{(m-1)!}\lim\frac{d^{m-1}}{dz^{m-1}}[(z-z_k)^mf]$.
+  solutions:
+    - label: Laurent + cerchio
+      steps: |
+        Per Cauchy si deforma $\gamma$ in cerchietti attorno a ogni singolarità. Vicino a $z_k$, $f = \sum_n a_n(z-z_k)^n$ (serie di Laurent); integrando termine a termine sopravvive solo $n=-1$, che dà $2\pi i\,a_{-1}$, e $a_{-1}$ è per definizione il residuo.
+      uses:
+        - field: Analisi complessa
+          result: Serie di Laurent e integrale di $z^n$ sul cerchio (carta ca-cerchio).
+  connections:
+    - field: QFT
+      note: È lo strumento per gli integrali sulla frequenza dei propagatori (carta ca-ieps).
+    - field: Random Matrix Theory
+      note: La densità degli autovalori si ricava dalla parte immaginaria della trasformata di Stieltjes, $\rho(x) = -\frac1\pi\mathrm{Im}\,G(x+i0^+)$, con la stessa logica di poli e $i\epsilon$.
+
+- id: ca-lorentziana
+  field: Analisi complessa
+  kind: derivazione
+  title: "$\\int dx/(1+x^2)$ in tre modi"
+  prereq: [ca-residui]
+  prompt: Calcola $\int_{-\infty}^{\infty}\frac{dx}{1+x^2}$ in almeno due modi diversi.
+  answer: $\pi$.
+  solutions:
+    - label: Residui
+      steps: |
+        Chiudo il cammino con un semicerchio di raggio $R$ nel semipiano superiore. Dentro c'è solo il polo $z=i$, con residuo $\frac{1}{z+i}\big|_{z=i} = \frac{1}{2i}$. Quindi l'integrale chiuso vale $2\pi i\cdot\frac{1}{2i} = \pi$.
+        Sull'arco $|f|\le\frac{1}{R^2-1}$ e la lunghezza è $\pi R$, quindi il contributo tende a zero.
+      uses:
+        - field: Analisi complessa
+          result: Teorema dei residui.
+    - label: Primitiva
+      steps: $\int\frac{dx}{1+x^2} = \arctan x$, e $\arctan(+\infty)-\arctan(-\infty) = \frac\pi2+\frac\pi2 = \pi$.
+    - label: Fourier
+      steps: |
+        $\int_{-\infty}^{\infty}e^{-|t|}e^{ikt}dt = 2\,\mathrm{Re}\int_0^\infty e^{-(1-ik)t}dt = \frac{2}{1+k^2}$.
+        Per la formula di inversione, valutata in $t=0$: $1 = e^{0} = \int\frac{dk}{2\pi}\frac{2}{1+k^2}$, quindi $\int\frac{dk}{1+k^2} = \pi$.
+      uses:
+        - field: Analisi di Fourier
+          result: Formula di inversione di Fourier.
+  connections:
+    - field: Probabilità
+      note: $\frac{1}{\pi(1+x^2)}$ è la densità di Cauchy (Lorentziana); il calcolo ne dà la normalizzazione. Non ha media né varianza, quindi niente teorema del limite centrale.
+    - field: Processi stocastici
+      note: $e^{-\gamma|t|}$ è la correlazione stazionaria del processo di Ornstein-Uhlenbeck (Langevin con attrito $\gamma$); il suo spettro è lorentziano.
+    - field: QFT
+      note: È il propagatore euclideo di un oscillatore, vedi carta ca-ieps.
+
+- id: ca-ieps
+  field: Analisi complessa
+  kind: derivazione
+  title: Prescrizione $i\epsilon$ e propagatore di Feynman
+  prereq: [ca-residui, ca-lorentziana]
+  prompt: Calcola $\displaystyle G(t) = \int_{-\infty}^{\infty}\frac{dk_0}{2\pi}\,\frac{i\,e^{-ik_0t}}{k_0^2-\omega^2+i\epsilon}$ con $\omega>0$, $\epsilon\to0^+$.
+  answer: $G(t) = \dfrac{e^{-i\omega|t|}}{2\omega}$, il propagatore di Feynman (ordinato nel tempo) di un oscillatore di massa 1.
+  solutions:
+    - label: Residui
+      steps: |
+        Poli: $k_0^2 = \omega^2 - i\epsilon$, cioè $k_0 = \pm(\omega - i\epsilon')$. Il polo in $+\omega$ sta sotto l'asse reale, quello in $-\omega$ sopra.
+        **$t>0$**: $e^{-ik_0t}$ decade per $\mathrm{Im}\,k_0<0$, quindi chiudo sotto (verso orario, fattore $-2\pi i$). Residuo in $k_0=\omega$: $\frac{1}{2\pi}\frac{i\,e^{-i\omega t}}{2\omega}$. Risultato: $-2\pi i\cdot\frac{i\,e^{-i\omega t}}{4\pi\omega} = \frac{e^{-i\omega t}}{2\omega}$.
+        **$t<0$**: chiudo sopra (antiorario, $+2\pi i$), polo in $-\omega$ con residuo $\frac{1}{2\pi}\frac{i\,e^{i\omega t}}{-2\omega}$. Risultato: $\frac{e^{i\omega t}}{2\omega}$.
+        Insieme: $\frac{e^{-i\omega|t|}}{2\omega}$. La scelta dei poli è ciò che produce l'ordinamento temporale.
+      uses:
+        - field: Analisi complessa
+          result: Teorema dei residui e lemma di Jordan (l'arco va a zero grazie all'esponenziale).
+    - label: Rotazione di Wick
+      steps: |
+        Con $t = -i\tau$ e $k_0 = ik_E$ (rotazione consentita proprio dalla posizione dei poli) l'integrale diventa
+        $$\int\frac{dk_E}{2\pi}\frac{e^{ik_E\tau}}{k_E^2+\omega^2} = \frac{e^{-\omega|\tau|}}{2\omega},$$
+        cioè la lorentziana della carta ca-lorentziana, riscalata. Tornando a $\tau = it$ si riottiene $\frac{e^{-i\omega|t|}}{2\omega}$.
+      uses:
+        - field: Analisi complessa
+          result: Teorema di Cauchy (si ruota il contorno senza attraversare poli).
+  connections:
+    - field: Meccanica statistica
+      note: Dopo la rotazione di Wick è la funzione di correlazione di una catena gaussiana (oscillatore in tempo immaginario, funzione di partizione).
+    - field: Probabilità
+      note: Il propagatore è la covarianza della misura gaussiana del campo libero; per questo il teorema di Wick è il teorema di Isserlis sui momenti gaussiani.

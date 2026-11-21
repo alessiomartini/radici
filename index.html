@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radici</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<style>
+:root { --bg:#fbfaf7; --fg:#1d1d1f; --muted:#6b6b70; --line:#e3e0d8; --card:#fff; --accent:#8a5a14; --link:#2a6b8f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg:#16171a; --fg:#e8e6e1; --muted:#9a9aa0; --line:#2c2e33; --card:#1e2024; --accent:#e0a84f; --link:#7fbde0; } }
+:root[data-theme="dark"] { --bg:#16171a; --fg:#e8e6e1; --muted:#9a9aa0; --line:#2c2e33; --card:#1e2024; --accent:#e0a84f; --link:#7fbde0; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.6 Georgia, "Times New Roman", serif; }
+header { display:flex; gap:1rem; align-items:center; padding:.8rem 1.5rem; border-bottom:1px solid var(--line); font-family:system-ui, sans-serif; font-size:15px; }
+header h1 { font-size:1.2rem; margin:0; color:var(--accent); }
+header nav { display:flex; gap:.4rem; }
+button { font:inherit; font-family:system-ui, sans-serif; font-size:14px; background:var(--card); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:.4rem .8rem; cursor:pointer; }
+button:hover, button.on { border-color:var(--accent); }
+.theme-btn { margin-left:auto; }
+#stats { color:var(--muted); }
+main { max-width:860px; margin:1.5rem auto; padding:0 1.5rem 6rem; }
+.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1.4rem 1.6rem; }
+.meta { font-family:system-ui, sans-serif; font-size:13px; color:var(--muted); display:flex; gap:.6rem; flex-wrap:wrap; }
+.kind { color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+h2 { margin:.3rem 0 .8rem; font-size:1.35rem; }
+.prompt { font-size:1.08rem; }
+.hint { font-family:system-ui, sans-serif; font-size:13px; color:var(--muted); }
+section.reveal { border-top:1px solid var(--line); margin-top:1.2rem; padding-top:1rem; }
+h3 { font-family:system-ui, sans-serif; font-size:13px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin:1.2rem 0 .4rem; }
+details { border:1px solid var(--line); border-radius:8px; padding:.5rem .9rem; margin:.5rem 0; }
+summary { cursor:pointer; font-weight:600; }
+.uses, .conn { border-left:3px solid var(--accent); padding:.2rem .8rem; margin:.5rem 0; font-size:.95rem; }
+.tag { font-family:system-ui, sans-serif; font-size:12px; font-weight:600; color:var(--accent); }
+.rate { display:flex; gap:.5rem; margin-top:1.4rem; flex-wrap:wrap; }
+.rate button { flex:1; min-width:120px; padding:.6rem; }
+.rate small { display:block; color:var(--muted); font-size:11px; }
+a { color:inherit; font-weight:600; text-decoration:none; cursor:pointer; }
+a:hover { color:var(--link); }
+.cal { display:grid; grid-template-columns:repeat(30, 1fr); gap:3px; margin:.6rem 0; }
+.cal span { aspect-ratio:1; border-radius:3px; background:var(--line); }
+.cal span.d1 { background:color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.cal span.d2 { background:var(--accent); }
+.list li { margin:.3rem 0; }
+.state { font-family:system-ui, sans-serif; font-size:12px; color:var(--muted); }
+.err { color:#c0392b; font-family:monospace; }
+@media (max-width:600px) { header { flex-wrap:wrap; padding:.6rem 1rem; } main { padding:0 .8rem 6rem; } .card { padding:1rem; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Radici</h1>
+  <nav><button id="tab-session" class="on">Sessione</button><button id="tab-catalog">Catalogo</button></nav>
+  <span id="stats"></span>
+  <button class="theme-btn" type="button">Tema</button>
+</header>
+<main id="main"><p class="hint">Caricamento…</p></main>
+<script src="app.js?v=1"></script>
+<script src="js/notes-widget.js?v=2" data-site="radici"></script>
+</body>
+</html>
