@@ -11,7 +11,8 @@ Unico file per il futuro e il passato del progetto, letto da Projects Overview
 -->
 
 ## Pilota
-- [x] Server locale con FSRS e salvataggio atomico in `state.json`
+- [x] FSRS nel browser (`ts-fsrs`), progressi in localStorage con Esporta/Importa e avviso di backup
+- [x] Sito pubblico su GitHub Pages
 - [x] Sessione giornaliera: carte piccole + una grande, prerequisiti, interleaving
 - [x] Carte pilota: meccanica classica (10) e analisi complessa (9), con soluzioni multiple e connessioni
 - [x] Catalogo, calendario degli ultimi 30 giorni, tema chiaro/scuro, feedback
@@ -35,9 +36,10 @@ Unico file per il futuro e il passato del progetto, letto da Projects Overview
 ## Decisioni e cose provate
 - Niente Anki a parte: il sito fa anche la ripetizione spaziata, ma lo scheduler è il pacchetto ufficiale `fsrs` (non riscritto a mano).
 - Niente passi di apprendimento in minuti (`learning_steps=()`): una sessione al giorno, intervalli in giorni; "Di nuovo" ripropone la carta a fine sessione.
-- Locale e non GitHub Pages: si usa alla scrivania e lo storico sta in `state.json` sul disco, versionato nel repo privato.
+- Prima versione con server Python locale (`fsrs` + `state.json`), sostituita lo stesso giorno: Alessio ha voluto il sito pubblico su GitHub Pages, quindi tutto nel browser. Lo storico in localStorage si perde se si cancellano i dati del browser: per questo Esporta/Importa e l'avviso dopo 7 giorni. Sincronizzazione su D1 rimandata finché il backup a mano basta.
 - Gamification minima (calendario, carte consolidate): l'evidenza sugli effetti è debole e gli streak rotti fanno mollare.
 - Soluzioni da confrontare invece della correzione di Claude: costa troppo uso ogni giorno.
 
 ## Log
+- 2026-11-21: sito pubblico su GitHub Pages, FSRS e progressi spostati nel browser
 - 2026-11-21: progetto avviato; pilota con server FSRS, sessione, catalogo e 19 carte (meccanica classica, analisi complessa)

@@ -1,16 +1,17 @@
 # Radici
 
-Metodo e sito **locale** per ripassare e consolidare ciò che ho studiato (fisica teorica e matematica, poi altri ambiti) e imparare cose nuove.
-Gira sul PC, alla scrivania: niente app sul telefono.
+Metodo e sito per ripassare e consolidare ciò che ho studiato (fisica teorica e matematica, poi altri ambiti) e imparare cose nuove.
+Pensato per il PC, alla scrivania.
 
-## Avvio
+Sito: https://alessiomartini.github.io/radici/ (GitHub Pages, statico, nessun build).
+
+## In locale
 
 ```powershell
-pip install -r requirements.txt
-python serve.py
+python -m http.server 8770
 ```
 
-Poi apri http://localhost:8770. Test: `python serve.py --test` (scheduler + validazione del contenuto).
+Poi apri http://localhost:8770. Controllo del contenuto: `python check.py` (YAML valido, id unici, prerequisiti esistenti).
 
 ## Come funziona
 
@@ -20,7 +21,7 @@ Una sessione al giorno, 20–30 minuti:
 2. **Una carta grande** (teorema o derivazione), a carta e penna, poi confronto con una o più soluzioni.
 
 Dopo ogni carta dai un voto (1 Di nuovo, 2 Difficile, 3 Bene, 4 Facile; tastiera: spazio e 1–4). Il voto va a
-[FSRS](https://github.com/open-spaced-repetition/py-fsrs) (lo scheduler di Anki), che decide quando rivederla.
+[FSRS](https://github.com/open-spaced-repetition/ts-fsrs) (lo scheduler di Anki, versione JS `ts-fsrs` da CDN), che decide quando rivederla.
 Le carte nuove arrivano solo quando i loro prerequisiti sono già stati visti, alternando i campi (interleaving).
 
 Perché così (evidenza): retrieval practice e ripetizione spaziata sono le tecniche più efficaci nella review di
@@ -29,9 +30,10 @@ aiuta soprattutto in matematica (Brunmair & Richter 2019).
 
 ## Dati
 
-- `content/*.yaml`: le carte, una lista per campo. È la fonte di verità.
-- `state.json`: lo storico delle ripetizioni (stato FSRS di ogni carta + log di ogni voto). Scritto dal server in modo atomico,
-  **committato nel repo** (privato) come backup. Mai cancellarlo: perderlo vuol dire perdere mesi di ripassi.
+- `content/*.yaml`: le carte, una lista per campo. È la fonte di verità; un file nuovo va aggiunto anche a `CONTENT` in `app.js`
+  (e si alza `VERSION` quando cambia il contenuto).
+- Progressi (stato FSRS di ogni carta + log di ogni voto): in `localStorage` del browser, chiave `radici-state`. Restano solo su quel
+  browser: **Esporta** scarica un backup JSON, **Importa** lo ripristina. Se l'ultimo backup ha più di 7 giorni, la barra in alto lo dice.
 
 ### Schema di una carta
 

@@ -18,7 +18,7 @@ header h1 { font-size:1.2rem; margin:0; color:var(--accent); }
 header nav { display:flex; gap:.4rem; }
 button { font:inherit; font-family:system-ui, sans-serif; font-size:14px; background:var(--card); color:var(--fg); border:1px solid var(--line); border-radius:6px; padding:.4rem .8rem; cursor:pointer; }
 button:hover, button.on { border-color:var(--accent); }
-.theme-btn { margin-left:auto; }
+#export { margin-left:auto; }
 #stats { color:var(--muted); }
 main { max-width:860px; margin:1.5rem auto; padding:0 1.5rem 6rem; }
 .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1.4rem 1.6rem; }
@@ -53,10 +53,11 @@ a:hover { color:var(--link); }
   <h1>Radici</h1>
   <nav><button id="tab-session" class="on">Sessione</button><button id="tab-catalog">Catalogo</button></nav>
   <span id="stats"></span>
+  <button id="export" type="button" title="Scarica un file con tutti i progressi">Esporta</button><button id="import" type="button" title="Ripristina i progressi da un file">Importa</button><input id="import-file" type="file" accept=".json" hidden>
   <button class="theme-btn" type="button">Tema</button>
 </header>
 <main id="main"><p class="hint">Caricamento…</p></main>
-<script src="app.js?v=1"></script>
+<script type="module" src="app.js?v=2"></script>
 <script src="js/notes-widget.js?v=2" data-site="radici"></script>
 </body>
 </html>

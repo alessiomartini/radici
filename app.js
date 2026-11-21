@@ -1,4 +1,11 @@
-// Radici: sessione giornaliera. Lo scheduling (FSRS) lo fa serve.py; qui si decide solo cosa mostrare oggi.
+// Radici: tutto nel browser. FSRS (ts-fsrs) decide le scadenze, i progressi stanno in localStorage (+ backup esportabile).
+import { fsrs, generatorParameters, createEmptyCard } from "https://cdn.jsdelivr.net/npm/ts-fsrs@6.0.0/+esm";
+import { load as parseYaml } from "https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/+esm";
+
+const CONTENT = ["content/meccanica-classica.yaml", "content/analisi-complessa.yaml"];  // un file per campo
+const STORE = "radici-state";
+// Niente passi di apprendimento in minuti: una sessione al giorno, intervalli in giorni.
+const scheduler = fsrs(generatorParameters({ enable_short_term: false }));
 const NEW_ATOMS_PER_DAY = 5;   // carte nuove "piccole" al giorno
 const BIG = new Set(["teorema", "derivazione"]);  // al massimo una nuova al giorno, sono le sessioni a carta e penna
 const MATURE_DAYS = 21;        // stabilità oltre cui una carta conta come consolidata
@@ -43,7 +50,10 @@ function buildQueue() {
 function renderStats() {
   const seen = items.filter(it => state.cards[it.id]).length;
   const mature = items.filter(it => (state.cards[it.id]?.stability ?? 0) >= MATURE_DAYS).length;
-  $("#stats").textContent = `oggi: ${queue.length} da fare · viste ${seen}/${items.length} · consolidate ${mature}`;
+  const exp = localStorage.getItem(STORE + "-exported");
+  const days = exp ? Math.floor((Date.now() - new Date(exp)) / 864e5) : null;
+  const warn = state.log.length && (days === null || days >= 7) ? ` · backup: ${days === null ? "mai" : days + " giorni fa"}` : "";
+  $("#stats").textContent = `oggi: ${queue.length} da fare · viste ${seen}/${items.length} · consolidate ${mature}${warn}`;
 }
 
 function calendar() {
@@ -122,12 +132,35 @@ function renderCatalog(openId) {
   window.scrollTo(0, 0);
 }
 
-async function rate(r) {
+const VERSION = 2;  // alzare quando cambia il contenuto (cache-busting)
+
+function save() {
+  localStorage.setItem(STORE, JSON.stringify(state));
+}
+
+// Backup: i progressi vivono solo in questo browser, quindi si esportano in un file ogni tanto.
+function exportState() {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 1)], { type: "application/json" }));
+  a.download = `radici-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  a.click();
+  localStorage.setItem(STORE + "-exported", new Date().toISOString());
+  renderStats();
+}
+async function importState(file) {
+  const data = JSON.parse(await file.text());
+  if (!data.cards || !Array.isArray(data.log)) return alert("File non valido");
+  if (!confirm(`Sostituire i progressi attuali (${state.log.length} ripassi) con quelli del file (${data.log.length} ripassi)?`)) return;
+  state = data; save(); buildQueue(); renderSession();
+}
+
+function rate(r) {
   const id = current.id;
-  const res = await fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, rating: r }) });
-  if (!res.ok) { alert("Salvataggio fallito: il server è acceso?"); return; }
-  state.cards[id] = await res.json();
-  state.log.push({ item: id, rating: r, review_datetime: new Date().toISOString() });
+  const now = new Date(), old = state.cards[id];
+  const card = old ? { ...old, due: new Date(old.due), last_review: old.last_review && new Date(old.last_review) } : createEmptyCard(now);
+  state.cards[id] = JSON.parse(JSON.stringify(scheduler.next(card, now, r).card));  // date -> stringhe ISO
+  state.log.push({ item: id, rating: r, review_datetime: now.toISOString() });
+  save();
   queue.shift();
   if (r === 1) queue.push(current);  // "Di nuovo": la rivedi alla fine della sessione di oggi
   renderSession();
@@ -139,6 +172,8 @@ document.addEventListener("click", (e) => {
   if (t.id === "reveal") renderSession(true);
   else if (t.dataset.rate) rate(+t.dataset.rate);
   else if (t.dataset.open) renderCatalog(t.dataset.open);
+  else if (t.id === "export") exportState();
+  else if (t.id === "import") $("#import-file").click();
   else if (t.id === "tab-session" || t.id === "tab-catalog") {
     $("#tab-session").classList.toggle("on", t.id === "tab-session");
     $("#tab-catalog").classList.toggle("on", t.id === "tab-catalog");
@@ -166,14 +201,15 @@ $(".theme-btn").addEventListener("click", () => {
   try { localStorage.setItem("radici-theme", theme); } catch (e) {}
 });
 
+$("#import-file").addEventListener("change", (e) => e.target.files[0] && importState(e.target.files[0]));
 window.addEventListener("load", async () => {
   window.SiteNotes?.setContext(() => ({ view, item: current?.id ?? null }));
   try {
-    const data = await (await fetch("/api/data")).json();
-    if (data.error) throw new Error(data.error);
-    items = data.items; state = data.state; byId = Object.fromEntries(items.map(it => [it.id, it]));
+    items = (await Promise.all(CONTENT.map(async f => parseYaml(await (await fetch(f + "?v=" + VERSION)).text())))).flat();
+    byId = Object.fromEntries(items.map(it => [it.id, it]));
+    state = JSON.parse(localStorage.getItem(STORE) || '{"cards":{},"log":[]}');
     buildQueue(); renderSession();
   } catch (e) {
-    $("#main").innerHTML = `<p class="err">Errore: ${esc(e.message)}. Avvia il server con <code>python serve.py</code> e apri http://localhost:8770.</p>`;
+    $("#main").innerHTML = `<p class="err">Errore nel caricamento: ${esc(e.message)}.</p>`;
   }
 });
