@@ -34,12 +34,11 @@ Unico file per il futuro e il passato del progetto, letto da Projects Overview
 - [ ] Import dei mazzi di `anki-decks` per avere tutto in un posto
 
 ## Decisioni e cose provate
-- Niente Anki a parte: il sito fa anche la ripetizione spaziata, ma lo scheduler è il pacchetto ufficiale `fsrs` (non riscritto a mano).
-- Niente passi di apprendimento in minuti (`learning_steps=()`): una sessione al giorno, intervalli in giorni; "Di nuovo" ripropone la carta a fine sessione.
+- Niente Anki a parte: il sito fa anche la ripetizione spaziata, ma lo scheduler è la libreria ufficiale `ts-fsrs` (non riscritto a mano).
+- Niente passi di apprendimento in minuti (`enable_short_term: false`): una sessione al giorno, intervalli in giorni; "Di nuovo" ripropone la carta a fine sessione.
 - Prima versione con server Python locale (`fsrs` + `state.json`), sostituita lo stesso giorno: Alessio ha voluto il sito pubblico su GitHub Pages, quindi tutto nel browser. Lo storico in localStorage si perde se si cancellano i dati del browser: per questo Esporta/Importa e l'avviso dopo 7 giorni. Sincronizzazione su D1 rimandata finché il backup a mano basta.
 - Gamification minima (calendario, carte consolidate): l'evidenza sugli effetti è debole e gli streak rotti fanno mollare.
 - Soluzioni da confrontare invece della correzione di Claude: costa troppo uso ogni giorno.
 
 ## Log
-- 2026-11-21: sito pubblico su GitHub Pages, FSRS e progressi spostati nel browser
-- 2026-11-21: progetto avviato; pilota con server FSRS, sessione, catalogo e 19 carte (meccanica classica, analisi complessa)
+- 2026-11-21: progetto avviato; pilota con FSRS, sessione, catalogo e 19 carte (meccanica classica, analisi complessa); pubblicato su GitHub Pages con progressi nel browser
